@@ -1,0 +1,14 @@
+{
+  "name": "cmd_yakovlev_bot",
+  "version": "1.0.0",
+  "description": "bot for team chat",
+  "main": "cmd_bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dr_Hard",
+  "license": "ISC",
+  "dependencies": {
+    "telegraf": "^4.16.3"
+  }
+}
