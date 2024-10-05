@@ -1,8 +1,8 @@
 {
   "name": "cmd_yakovlev_bot",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "bot for team chat",
-  "main": "cmd_bot.js",
+  "main": "bot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node bot.js"
@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.7.7",
+    "iconv-lite": "^0.6.3",
     "telegraf": "^4.16.3"
   }
 }
