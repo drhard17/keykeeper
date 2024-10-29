@@ -1,7 +1,6 @@
 FROM node:alpine
 WORKDIR /app
-COPY ./src ./src
-COPY package.json ./
+COPY *.js* ./
 COPY .env ./
-RUN npm install
+RUN npm ci
 CMD ["npm", "run", "start"]
