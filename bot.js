@@ -1,9 +1,10 @@
+require('dotenv').config()
 const fs = require('fs')
 const path = require('path')
 const Iconv = require('iconv-lite')
 const { Telegraf } = require('telegraf')
 const axios = require('axios')
-const { G4F } = require("g4f")
+const OpenAI = require('openai')
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 const buttons = [
@@ -59,7 +60,6 @@ const sendAnimalPic = async(ctx) => {
     try {
         const response = await axios.get(imageUrl, { responseType: 'stream' })
         const filePath = path.join(__dirname, 'animal.jpg')
-        console.log(filePath)
         const writer = fs.createWriteStream(filePath)
         response.data.pipe(writer)
         await new Promise((resolve, reject) => {
@@ -74,14 +74,20 @@ const sendAnimalPic = async(ctx) => {
 }
 
 const sendAIpoem = async(ctx) => {
-    const g4f = new G4F()
+    const openai = new OpenAI()
     const name = ctx.message.from.first_name
     const messages = [
-        { role: 'user', content: `Сочини стишок про то, как ${name} взял ключ` }
+        { 
+            role: 'user', 
+            content: `Сочини стишок про то, как ${name} взял ключ. Используй только русские имена.` 
+        }
     ]
     try {
-        const answer = await g4f.chatCompletion(messages)
-        ctx.reply(answer)
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages
+        })
+        ctx.reply(completion.choices[0].message.content)
     } catch (error) {
         ctx.reply(`Ошибка OpenAI: ${error.message}`)        
     }
