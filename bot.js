@@ -55,8 +55,8 @@ const sendAnekdot = async(ctx) => {
     }
 }
 
-const sendAnimalPic = async(ctx) => {
-    const imageUrl = await getAnimalURL()
+const sendAnimalPic = (animal) => async(ctx) => {
+    const imageUrl = await getAnimalURL(animal)
     try {
         const response = await axios.get(imageUrl, { responseType: 'stream' })
         const filePath = path.join(__dirname, 'animal.jpg')
@@ -96,16 +96,18 @@ const sendAIpoem = async(ctx) => {
 const actions = new Array(9).fill(() => {})
 actions[0] = sendQuotation
 actions[1] = sendAnekdot
-actions[2] = sendAnimalPic
-actions[3] = sendAIpoem
+actions[2] = sendAnimalPic('cat')
+actions[3] = sendAnimalPic('cat')
+actions[4] = sendAnimalPic('dog')
+actions[5] = sendAIpoem
 
 const extractAnekdot = (siteCode) => {
-        return siteCode
-            .match(/\[\\"(.|\n)+\\"\]/)[0]
-            .split(/\\",\\"/)[0]
-            .replace(/^\[\\"/, '')
-            .replace(/\\/gm, '')
-            .replace(/<br>/gm, '\n')
+    return siteCode
+        .match(/\[\\"(.|\n)+\\"\]/)[0]
+        .split(/\\",\\"/)[0]
+        .replace(/^\[\\"/, '')
+        .replace(/\\/gm, '')
+        .replace(/<br>/gm, '\n')
 }
 
 const formQuote = (quoteText, name) => {
@@ -115,8 +117,10 @@ const formQuote = (quoteText, name) => {
         return msgText
 }
 
-const getAnimalURL = async() => {
-    const animal = Math.random() < 0.5 ? 'cat' : 'dog'
+const getAnimalURL = async(animal = Math.random() < 0.5 ? 'cat' : 'dog') => {
+    if (!(animal === 'cat' || animal === 'dog')) {
+        throw new Error('Wrong animal provided')
+    }
     const catAPIkey = 'live_JTS2ybskFIq3bmFB8VtWWJ11pUwbCOqiWqv0d6vTjwdtFjNSOJRPNYAR0uK1amGm'
     const catAPIurl = `https://api.the${animal}api.com/v1/images/search?api_key=${catAPIkey}`
     try {
