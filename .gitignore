@@ -1,5 +1,5 @@
 .vscode
 node_modules
 .env
-rebuilrestart.sh
+rebuildrestart.sh
 restart.sh
