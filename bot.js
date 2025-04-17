@@ -84,7 +84,7 @@ const sendAIpoem = async(ctx) => {
     ]
     try {
         const completion = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-4.1",
             messages
         })
         ctx.reply(completion.choices[0].message.content)
@@ -100,6 +100,8 @@ actions[2] = sendAnimalPic('cat')
 actions[3] = sendAnimalPic('cat')
 actions[4] = sendAnimalPic('dog')
 actions[5] = sendAIpoem
+actions[6] = sendAIpoem
+actions[7] = sendAIpoem
 
 const extractAnekdot = (siteCode) => {
     return siteCode
