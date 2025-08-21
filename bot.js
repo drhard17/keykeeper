@@ -84,7 +84,7 @@ const sendAIpoem = async(ctx) => {
     ]
     try {
         const completion = await openai.chat.completions.create({
-            model: "gpt-4.1",
+            model: "gpt-5",
             messages
         })
         ctx.reply(completion.choices[0].message.content)
