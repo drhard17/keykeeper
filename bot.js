@@ -2,27 +2,51 @@ require('dotenv').config()
 const fs = require('fs')
 const path = require('path')
 const Iconv = require('iconv-lite')
-const { Telegraf } = require('telegraf')
+const TelegramBot = require('node-telegram-bot-api')
 const axios = require('axios')
 const OpenAI = require('openai')
 
-const bot = new Telegraf(process.env.BOT_TOKEN)
+const token = process.env.BOT_TOKEN
+const bot = new TelegramBot(token, { polling: true })
+
 const buttons = [
     [ { text: '🔑 Взял ключ' }, { text: '🗝 Ключ взяла' } ],
     [ { text: '🔧 Ключ у меня' } ],
 ]
 const keyTaken = buttons.flat().map((key) => key.text)
 
-bot.start((ctx) => ctx.reply('Привет, я ключник'))
-bot.help((ctx) => ctx.reply('Позови меня и нажми на кнопку'))
-bot.command('key', (ctx) => {
-    ctx.sendMessage('Привет', { 
+function createContext(msg) {
+    return {
+        message: msg,
+        reply: (text) => bot.sendMessage(msg.chat.id, text),
+        replyWithPhoto: (photo) => bot.sendPhoto(msg.chat.id, photo.source),
+        sendMessage: (text, options) => bot.sendMessage(msg.chat.id, text, options)
+    }
+}
+
+bot.onText(/\/start/, (msg) => {
+    bot.sendMessage(msg.chat.id, 'Привет, я ключник')
+})
+
+bot.onText(/\/help/, (msg) => {
+    bot.sendMessage(msg.chat.id, 'Позови меня и нажми на кнопку')
+})
+
+bot.onText(/\/key/, (msg) => {
+    bot.sendMessage(msg.chat.id, 'Привет', {
         reply_markup: {
             keyboard: buttons
         }
     })
 })
-bot.hears(keyTaken, (ctx) => actions[betAction()](ctx))
+
+bot.on('message', (msg) => {
+    if (keyTaken.includes(msg.text)) {
+        const ctx = createContext(msg)
+        // actions[betAction()](ctx)
+        actions[5](ctx)
+    }
+})
 
 const betAction = () => {
     bet = Math.floor(Math.random() * 9)
@@ -79,7 +103,7 @@ const sendAIpoem = async(ctx) => {
     const messages = [
         { 
             role: 'user', 
-            content: `Сочини стишок про то, как ${name} взял ключ. Используй только русские имена. Стишок должен быть на русском, рифмы должны быть чёткие, размер строк одинаковый. В коллективе есть также Саша, Олег, Маша, Алина, Лена, Кодрян. Упомянуть их или нет, реши сам. Эти люди занимаются управлением конфигурацией и управлением изменениями в самолётостроении.` 
+            content: `${name} - инженер в самолетостроении. Напиши стихотворение с поздравлениями, что он (или она, если имя женское) пришел на работу, пожелай успехов и продуктивной работы. Стихотворение должно быть с четкими рифмами и одинаковым размером строк. Используй только русские имена.` 
         }
     ]
     try {
@@ -133,6 +157,11 @@ const getAnimalURL = async(animal = Math.random() < 0.5 ? 'cat' : 'dog') => {
     }
 }
 
-bot.launch()
-process.once('SIGINT', () => bot.stop('SIGINT'))
-process.once('SIGTERM', () => bot.stop('SIGTERM'))
+process.once('SIGINT', () => {
+    bot.stopPolling()
+    process.exit()
+})
+process.once('SIGTERM', () => {
+    bot.stopPolling()
+    process.exit()
+})
