@@ -43,8 +43,7 @@ bot.onText(/\/key/, (msg) => {
 bot.on('message', (msg) => {
     if (keyTaken.includes(msg.text)) {
         const ctx = createContext(msg)
-        // actions[betAction()](ctx)
-        actions[5](ctx)
+        actions[betAction()](ctx)
     }
 })
 
