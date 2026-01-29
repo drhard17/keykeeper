@@ -7,7 +7,7 @@ const axios = require('axios')
 const OpenAI = require('openai')
 
 const token = process.env.BOT_TOKEN
-const bot = new TelegramBot(token, { polling: true })
+const bot = new TelegramBot(token, { polling: true, request: { debug: true } })
 
 const buttons = [
     [ { text: '🔑 Взял ключ' }, { text: '🗝 Ключ взяла' } ],
@@ -34,8 +34,12 @@ bot.onText(/\/help/, (msg) => {
 
 bot.onText(/\/key/, (msg) => {
     bot.sendMessage(msg.chat.id, 'Привет', {
-        reply_markup: {
-            keyboard: buttons
+    reply_markup: {
+        keyboard: buttons,
+        resize_keyboard: false,
+        one_time_keyboard: false,
+        selective: false,
+        is_persistent: true
         }
     })
 })
