@@ -38,8 +38,7 @@ bot.onText(/\/key/, (msg) => {
         keyboard: buttons,
         resize_keyboard: false,
         one_time_keyboard: false,
-        selective: false,
-        is_persistent: true
+        selective: false
         }
     })
 })
